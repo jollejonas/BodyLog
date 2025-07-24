@@ -1,0 +1,20 @@
+# Node.js
+node_modules/
+*.log
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+dist/
+build/
+
+# OS-filer
+.DS_Store
+Thumbs.db
