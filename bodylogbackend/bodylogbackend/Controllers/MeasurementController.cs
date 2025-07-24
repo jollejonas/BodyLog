@@ -56,7 +56,18 @@ namespace bodylogbackend.Controllers
                 return BadRequest("Measurement cannot be null.");
             }
 
+            var userIdClaim = User.FindFirst("userId");
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID claim not found.");
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+
             var measurement = _mapper.Map<Measurement>(dto);
+
+            measurement.UserID = userId;
 
             _context.Measurements.Add(measurement);
             await _context.SaveChangesAsync();

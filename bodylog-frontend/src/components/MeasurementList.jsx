@@ -24,7 +24,8 @@ export default function MeasurementList({ measurements, onDelete, onUpdate }) {
       <div key={index} className="bg-white p-4 rounded shadow space-y-2">
         <input
           type="date"
-          value={editData.date}
+          value={new Date(editData.date).toLocaleDateString('da-DK')}
+
           onChange={(e) => setEditData({ ...editData, date: e.target.value })}
           className="w-full p-2 border rounded"
         />
@@ -78,7 +79,7 @@ export default function MeasurementList({ measurements, onDelete, onUpdate }) {
   }
   return (
     <div key={index} className="bg-gray-100 p-4 rounded shadow">
-      <p><strong>Dato:</strong> {m.date}</p>
+      <p><strong>Dato:</strong> {new Date(m.date).toLocaleDateString('da-DK')}</p>
       <p><strong>Vægt:</strong> {m.weight} kg</p>
       {m.waist && <p><strong>Talje:</strong> {m.waist} cm</p>}
       {m.chest && <p><strong>Bryst:</strong> {m.chest} cm</p>}
