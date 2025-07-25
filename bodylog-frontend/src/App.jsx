@@ -13,6 +13,11 @@ function App() {
     email = decoded.sub;
   }
 
+  function handleLogout() {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 text-gray-800">
       <header className="py-8 px-2 text-center bg-white shadow">
@@ -28,7 +33,11 @@ function App() {
             Log ind eller opret bruger
           </a>
         </div>) : 
-  (<p className="mt-4 text-green-600">Du er logget ind som {email} ✅</p>)}
+  (<div><p className="mt-4 text-green-600">Du er logget ind som {email} </p>
+    <button onClick={handleLogout} className="mt-2 text-red-600 hover:underline">
+      Log ud
+    </button>
+  </div>)}
 
         </header>
 

@@ -1,18 +1,8 @@
 import { useState, useEffect } from "react";
 
-export default function GoalTracker({ measurements }) {
-    const [goalWeight, setGoalWeight] = useState(() => {
-        const saved = localStorage.getItem("bodylog-goalWeight");
-        return saved ? parseFloat(saved) : "";
-    });
+export default function GoalTracker({ measurements, goalWeight, onGoalWeightChange }) {
 
-    const [input, setInput] = useState(goalWeight);
-
-    useEffect(() => {
-        if(goalWeight) {
-            localStorage.setItem("bodylog-goalWeight", goalWeight);
-        }
-    }, [goalWeight]);
+    const [input, setInput] = useState(goalWeight ?? "");
 
     const latest = measurements[0];
     const start = measurements[measurements.length - 1];
@@ -72,7 +62,7 @@ export default function GoalTracker({ measurements }) {
                         placeholder="Indtast målvægt (kg)"
                     />
                     <button
-                        onClick={() => setGoalWeight(parseFloat(input))}
+                        onClick={() => onGoalWeightChange(parseFloat(input))}
                         className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition"
                     >
                         Gem

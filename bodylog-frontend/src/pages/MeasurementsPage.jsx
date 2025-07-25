@@ -7,12 +7,13 @@ import GoalTracker from "../components/GoalTracker";
 
 export default function MeasurementsPage() {
     const [measurements, setMeasurements] = useState([]);
+    const [goalWeight, setGoalWeight] = useState(null);
 
     useEffect(() => {
         const fetchMeasurements = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await api.get("/measurement", {
+                const response = await api.get("/measurement/my", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setMeasurements(response.data);
@@ -22,6 +23,35 @@ export default function MeasurementsPage() {
         };
         fetchMeasurements();
     }, []);
+    
+    useEffect(() => {
+    const fetchGoalWeight = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await api.get("/user/goalweight", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            console.log("Fetched goal weight:", response.data);
+            setGoalWeight(response.data);
+        } catch (error) {
+            console.error("Error fetching goal weight:", error);
+            return null;
+        }
+    }
+    fetchGoalWeight();
+    }, []);
+    
+    const updateGoalWeight = async (newGoalWeight) => {
+        try {
+            const token = localStorage.getItem('token');
+            await api.put("/user/goalweight", { goalWeight: newGoalWeight }, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setGoalWeight(newGoalWeight);
+        } catch (error) {
+            console.error("Error updating goal weight:", error);
+        }
+    }
 
     async function handleAdd(measurement) {
         try {
@@ -71,7 +101,7 @@ export default function MeasurementsPage() {
 
       <div className="flex flex-col md:flex-row gap-6 md:gap-10">
         <MeasurementForm onAdd={handleAdd} />
-        <GoalTracker measurements={measurements} />
+        <GoalTracker measurements={measurements} goalWeight={goalWeight} onGoalWeightChange={updateGoalWeight} />
         <MeasurementList
           measurements={measurements}
           onDelete={handleDelete}

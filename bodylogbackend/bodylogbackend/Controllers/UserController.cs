@@ -41,6 +41,24 @@ public class UserController : ControllerBase
         return Ok(dto);
     }
 
+    [HttpGet("goalWeight")]
+    public async Task<IActionResult> GetMyGoalWeight()
+    {
+        var userIdClaim = User.FindFirst("userId");
+        if (userIdClaim == null)
+        {
+            return Unauthorized("User ID claim not found.");
+        }
+        var userId = int.Parse(userIdClaim.Value);
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        var dto = _mapper.Map<UserDto>(user);
+        return Ok(dto.GoalWeight);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createDto)
     {

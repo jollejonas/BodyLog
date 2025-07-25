@@ -48,6 +48,25 @@ namespace bodylogbackend.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyMeasurements()
+        {
+            var userIdClaim = User.FindFirst("userId");
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID claim not found.");
+            }
+            var userId = int.Parse(userIdClaim.Value);
+            var measurements = await _context.Measurements
+                .Where(m => m.UserID == userId)
+                .ToListAsync();
+            if (measurements == null || !measurements.Any())
+            {
+                return NotFound();
+            }
+            return Ok(measurements);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateMeasurement([FromBody] CreateMeasurementDto dto)
         {
