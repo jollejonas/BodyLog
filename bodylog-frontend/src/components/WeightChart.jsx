@@ -21,7 +21,7 @@ export default function WeightChart({ measurements }) {
     thigh: false,
   });
 
-  const sorted = [...measurements].reverse();
+  const sorted = [...measurements];
 
   const labels = sorted.map((m) => m.date);
 

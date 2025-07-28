@@ -3,18 +3,19 @@ import Home from './pages/Home';
 import MeasurementsPage from './pages/MeasurementsPage';
 import AuthPage from './pages/AuthPage';
 import { jwtDecode } from 'jwt-decode';
+import { useAuth } from './contexts/AuthContext';
 
 function App() {
-  const isLoggedIn = !!localStorage.getItem('token');
-  const token = localStorage.getItem('token');
+  const { isLoggedIn, login, logout, token } = useAuth();
   let email = "";
   if( token ) {
     const decoded = jwtDecode(token);
-    email = decoded.sub;
+    email = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
   }
 
   function handleLogout() {
-    localStorage.removeItem('token');
+    logout();
+    console.log("User logged out");
     window.location.href = '/';
   }
 
@@ -43,10 +44,12 @@ function App() {
 
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" 
+            element={!isLoggedIn ? <Home /> : <Navigate to="/measurements" />} 
+          />
           <Route
             path="/measurements"
-            element={isLoggedIn ? <MeasurementsPage /> : <Navigate to="/login" />}
+            element={isLoggedIn ? <MeasurementsPage /> : <Navigate to="/auth" />}
           />
           
           <Route path="/auth" element={<AuthPage />} />

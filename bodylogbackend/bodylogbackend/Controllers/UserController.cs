@@ -2,8 +2,10 @@
 using bodylogbackend.Data;
 using bodylogbackend.DTOs;
 using bodylogbackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace bodylogbackend.Controllers;
 
@@ -44,7 +46,7 @@ public class UserController : ControllerBase
     [HttpGet("goalWeight")]
     public async Task<IActionResult> GetMyGoalWeight()
     {
-        var userIdClaim = User.FindFirst("userId");
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)
         {
             return Unauthorized("User ID claim not found.");
@@ -57,6 +59,21 @@ public class UserController : ControllerBase
         }
         var dto = _mapper.Map<UserDto>(user);
         return Ok(dto.GoalWeight);
+    }
+
+    [Authorize]
+    [HttpPut("goalweight")]
+    public async Task<IActionResult> UpdateGoalWeight([FromBody] UpdateGoalWeightDto dto)
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("Missing user ID"));
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound("User not found");
+
+        user.GoalWeight = dto.GoalWeight;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { goalWeight = user.GoalWeight });
     }
 
     [HttpPost]

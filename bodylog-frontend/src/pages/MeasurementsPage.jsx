@@ -4,16 +4,17 @@ import MeasurementForm from "../components/MeasurementForm";
 import MeasurementList from "../components/MeasurementList";
 import WeightChart from "../components/WeightChart";
 import GoalTracker from "../components/GoalTracker";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function MeasurementsPage() {
     const [measurements, setMeasurements] = useState([]);
     const [goalWeight, setGoalWeight] = useState(null);
+    const { token } = useAuth();
 
     useEffect(() => {
         const fetchMeasurements = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await api.get("/measurement/my", {
+                const response = await api.get("/Measurement/my", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setMeasurements(response.data);
@@ -31,7 +32,6 @@ export default function MeasurementsPage() {
             const response = await api.get("/user/goalweight", {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log("Fetched goal weight:", response.data);
             setGoalWeight(response.data);
         } catch (error) {
             console.error("Error fetching goal weight:", error);
@@ -55,37 +55,33 @@ export default function MeasurementsPage() {
 
     async function handleAdd(measurement) {
         try {
-            const token = localStorage.getItem('token');
-            const response = await api.post("/measurement", measurement, {
+            await api.post("/measurement", measurement, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setMeasurements([response.data, ...measurements]);
+            setMeasurements([measurement, ...measurements]);
         } catch (error) {
             console.error("Error adding measurement:", error);
         }
     }
 
-    async function handleDelete(index) { 
-        const id = measurements[index].id;
+    async function handleDelete(id) { 
         try {
-            const token = localStorage.getItem('token');
             await api.delete(`/measurement/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setMeasurements(measurements.filter((m) => m.id !== id));
+            setMeasurements((prev) => prev.filter((m) => m.id !== id));
         } catch (error) {
             console.error("Error deleting measurement:", error);
         }
     }
 
-    async function handleUpdate(index, updated) {
-        const id = measurements[index].id;
+    async function handleUpdate(id, updated) {
         try {
-            const token = localStorage.getItem('token');
             const response = await api.put(`/measurement/${id}`, updated, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const newList = [...measurements];
+            const index = newList.findIndex((m) => m.id === id);
             newList[index] = response.data;
             setMeasurements(newList);
         } catch (error) {
@@ -104,6 +100,7 @@ export default function MeasurementsPage() {
         <GoalTracker measurements={measurements} goalWeight={goalWeight} onGoalWeightChange={updateGoalWeight} />
         <MeasurementList
           measurements={measurements}
+          oldNumToShow={3}
           onDelete={handleDelete}
           onUpdate={handleUpdate}
         />

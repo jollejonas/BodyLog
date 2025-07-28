@@ -5,6 +5,7 @@ using bodylogbackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace bodylogbackend.Controllers
 {
@@ -48,15 +49,20 @@ namespace bodylogbackend.Controllers
             return Ok(dtoList);
         }
 
+        [Authorize]
         [HttpGet("my")]
         public async Task<IActionResult> GetMyMeasurements()
         {
-            var userIdClaim = User.FindFirst("userId");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
                 return Unauthorized("User ID claim not found.");
             }
-            var userId = int.Parse(userIdClaim.Value);
+
+            if (!int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
             var measurements = await _context.Measurements
                 .Where(m => m.UserID == userId)
                 .ToListAsync();
@@ -75,7 +81,7 @@ namespace bodylogbackend.Controllers
                 return BadRequest("Measurement cannot be null.");
             }
 
-            var userIdClaim = User.FindFirst("userId");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
             if (userIdClaim == null)
             {
@@ -114,6 +120,28 @@ namespace bodylogbackend.Controllers
             existingMeasurement.Thigh = measurement.Thigh;
             _context.Measurements.Update(existingMeasurement);
             await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMeasurement(int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID claim not found.");
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+            var measurement = await _context.Measurements.FindAsync(id);
+
+            if (measurement == null)
+            {
+                return NotFound();
+            }
+            _context.Measurements.Remove(measurement);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

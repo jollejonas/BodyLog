@@ -6,14 +6,12 @@ import GoalTracker from "../components/GoalTracker";
 
 function Home() {
   const [measurements, setMeasurements] = useState(() => {
-  // helper til at generere datoer
   const generateDate = (weeksAgo) => {
     const d = new Date();
     d.setDate(d.getDate() - weeksAgo * 7);
     return d.toISOString().split('T')[0]; // YYYY-MM-DD
   };
 
-  // fast liste med 5 målinger
   return [
     {
       id: 1,
@@ -58,11 +56,6 @@ function Home() {
   ];
 });
 
-  useEffect(() => {
-    console.log("Saving measurements to localStorage");
-    localStorage.setItem("bodylog-measurements", JSON.stringify(measurements));
-  }, [measurements]);
-
   function handleAdd(measurement) {
     setMeasurements([measurement, ...measurements]);
   }
@@ -104,7 +97,7 @@ function Home() {
       <div className="flex flex-col md:flex-row gap-6 md:gap-10">
         <MeasurementForm onAdd={handleAdd} />
         <GoalTracker measurements={measurements} />
-        <MeasurementList measurements={measurements} onDelete={handleDelete} onUpdate={handleUpdate} />
+        <MeasurementList measurements={measurements} oldNumToShow={3} onDelete={handleDelete} onUpdate={handleUpdate} />
       </div>
 
       {measurements.length > 0 && (

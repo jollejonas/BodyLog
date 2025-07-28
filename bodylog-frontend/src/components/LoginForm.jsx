@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [passwordHash, setPasswordHash] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await api.post("/auth/login", { email, passwordHash });
-      localStorage.setItem("token", response.data.token);
+      login(response.data.token);
       navigate("/measurements");
+      console.log("Login successful, token stored:", response.data.token);
     } catch (error) {
       alert("Login fejlede!");
       console.error(error);

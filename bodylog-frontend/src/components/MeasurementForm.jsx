@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export default function MeasurementForm({ onAdd }) {
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
+    date: new Date().toISOString().split("T")[0], // Default to today
     weight: "",
     waist: "",
     chest: "",
@@ -18,8 +18,28 @@ export default function MeasurementForm({ onAdd }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onAdd(formData); // send data videre
-    setFormData({ ...formData, weight: "", waist: "", chest: "", thigh: "" });
+
+    if (!formData.weight) {
+        alert("Vægt er påkrævet");
+        return;
+    }
+
+  const cleanedData = {
+    ...formData,
+    date: new Date(formData.date).toISOString(),
+    weight: formData.weight !== "" ? parseFloat(formData.weight) : null,
+    waist: formData.waist !== "" ? parseFloat(formData.waist) : null,
+    chest: formData.chest !== "" ? parseFloat(formData.chest) : null,
+    thigh: formData.thigh !== "" ? parseFloat(formData.thigh) : null,
+  };
+  onAdd(cleanedData);
+  setFormData({
+    ...formData,
+    weight: "",
+    waist: "",
+    chest: "",
+    thigh: "",
+  });
   }
 
   return (

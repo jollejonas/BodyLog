@@ -31,10 +31,12 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid credentials");
         }
 
+        Console.WriteLine(user);
+
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-            new Claim("userId", user.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
