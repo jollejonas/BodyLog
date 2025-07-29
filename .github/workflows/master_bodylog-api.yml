@@ -1,0 +1,60 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - bodylog-api
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Build with dotnet
+        run: dotnet build bodylogbackend/bodylogbackend/bodylogbackend.csproj --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish bodylogbackend/bodylogbackend/bodylogbackend.csproj -c Release -o publish
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: publish
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_199846B50EB640C09CE111F3E73BB40B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_EC4B8D69166A40B18E8DBC8E3935E6EB }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7373D9C3714E4A07AB7A7C3CA004DEF8 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'bodylog-api'
+          slot-name: 'Production'
+          package: .

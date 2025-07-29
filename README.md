@@ -1,49 +1,41 @@
-💪 BodyLog
+# 💪 BodyLog
 
-BodyLog is a personal tracker for weight and body measurements. It's built for users who want a simple way to track progress over time, set goals, and stay motivated – without calorie counting or complexity.
+**BodyLog** is a personal tracking app for weight and body measurements. It helps users track progress over time, set goals, and stay motivated – all without calorie counting or unnecessary complexity.
 
-🚀 Features
+---
 
-🗓️ Log weight and measurements (waist, hips, thigh, etc.) with date
+## 🚀 Features
 
-📊 Visualize progress with interactive charts
+- 📝 Log weight and body measurements (waist, hips, thighs, etc.)
+- 📊 View interactive charts showing your progress
+- 🎯 Set and update personal weight goals
+- ✅ Track goal progress and completion
+- 👤 User authentication with JWT tokens
+- 📱 Responsive design for mobile and desktop
 
-🌟 Set a personal weight goal and track your progress
+### Planned features
 
-✅ Check off goals when achieved
+- 🧠 Motivational insights and reminders
+- 📈 Change tracking (since start / since last entry)
+- 🌙 Dark mode and optional PWA (offline-friendly)
+- 🏅 Basic gamification (e.g., badges or milestones)
 
-👤 User authentication with JWT
+---
 
+## 🛠 Tech Stack
 
-🛠️ Planned features:
+### Frontend
+- **React** with functional components and hooks
+- **Tailwind CSS** for styling
+- **Recharts** for charting
+- **LocalStorage** for goal tracking
 
-Gamification and motivational reminders
+### Backend
+- **ASP.NET Core Web API** with C#
+- **Entity Framework Core** with in-memory DB (easy to switch to SQL Server/PostgreSQL)
+- **Repository pattern** and **AutoMapper**
+- **JWT-based authentication**
 
-Extended stats (change since start / last measurement)
-
-Dark mode & PWA for mobile support
-
-
-🛠️ Tech Stack
-
-Frontend
-
-React (with hooks)
-
-Tailwind CSS for styling
-
-Recharts for chart visualization
-
-
-🛠️ Backend
-
-ASP.NET Core Web API
-
-C# with Repository Pattern and AutoMapper
-
-Entity Framework Core
-
-JWT authentication
 
 
 🧠 Project Motivation
