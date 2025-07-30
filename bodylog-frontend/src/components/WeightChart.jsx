@@ -21,9 +21,15 @@ export default function WeightChart({ measurements }) {
     thigh: false,
   });
 
-  const sorted = [...measurements];
+  const sorted = [...measurements].sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const labels = sorted.map((m) => m.date);
+  const labels = sorted.map((m) =>
+  new Date(m.date).toLocaleDateString("da-DK", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  })
+);
 
 
   const data = {
